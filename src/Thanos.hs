@@ -27,7 +27,7 @@ ironMan = UnPersonaje{
     planeta = "La Tierra",
     edad = 35,
     energia = 100,
-    habilidad = [lanzarRayos]
+    habilidad = [lanzarRayos,agilidad]
 }
 
 lanzarRayos = 5
@@ -35,6 +35,7 @@ conjurarHechizos = 3
 agilidad = 2
 estirarRaices = 4
 sacarGarras = 1
+hacerseElPiola = 0
 
 drStrange = UnPersonaje{
     nombre = "Stephen Strange",
@@ -62,17 +63,27 @@ wolverine = UnPersonaje{
     planeta = "La Tierra",
     edad = 27,
     energia = 66,
-    habilidad = [sacarGarras]
+    habilidad = [sacarGarras,hacerseElPiola]
 }
 
 
 universoNormal = UnUniverso [ironMan,drStrange,wolverine,groot,laViudaNegra] 
 
+chasquidoUniverso :: Universo -> Universo
+chasquidoUniverso universo = universo {personajes = mitadDePersonajesUniverso universo} 
 
-chasquidoUniverso universo = universo {personajes = take (length(personajes universo) `div` 2) (personajes universo)} 
+mitadDePersonajesUniverso :: Universo -> [Personaje]
+mitadDePersonajesUniverso universo = take (length(personajes universo) `div` 2) (personajes universo)
     
 
+aptoPendex :: Universo -> Bool
+aptoPendex = any ((<45).edad).personajes
 
+energiaTotal :: Universo -> Int
+energiaTotal = sum . map energia . filter tieneMasDeUnaHabilidad . personajes 
+
+tieneMasDeUnaHabilidad :: Personaje -> Bool
+tieneMasDeUnaHabilidad = (>1).length.habilidad 
 
 
 

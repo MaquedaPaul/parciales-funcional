@@ -135,7 +135,7 @@ gemaLoca gema = gema.gema
 
 guanteleteDeGoma = UnGuantelete{
     material = "Goma",
-    gemas = [gemaTiempo,gemaAlma "usar Mjolnir",gemaLoca (gemaAlma "programacion en Haskell")]
+    gemas = [gemaTiempo,gemaAlma "usar Mjolnir",gemaLoca (gemaAlma "programacion en Haskell"),(gemaMente (-50))]
 }
 gemasQueEncontreAbajoDeMiCama = [gemaPoder,gemaEspacio "Marte",gemaMente 50,gemaTiempo,gemaAlma "usar Mjolnir",gemaLoca (gemaAlma "programacion en Haskell")]
 
@@ -152,9 +152,32 @@ usarGema personaje gema  = gema personaje
 -- Si no se pueden cambiar los datos, se van creando nuevas víctimas que tienen los campos afectados según la gema que se utilizó.
 -- Por cada gema utilizada en una víctima, creo una más y a esa le aplicó la gema siguiente en la lista hasta terminar
 
---gemaMasPoderosa :: Guantelete -> Personaje -> Gema
---gemaMasPoderosa (UnGuantelete _ (gema:gemas)) personaje
--- --|
---- |otherwise
+gemaMasPoderosa ::  Guantelete -> Personaje -> Gema
+gemaMasPoderosa = gemaDeMayorPoder.gemas
 
+gemaDeMayorPoder :: [Gema] -> Personaje -> Gema
+gemaDeMayorPoder [gema] _ = gema
+gemaDeMayorPoder (gema1:gema2:gemas) personaje
+ |menorEnergiaEnPersonaje gema1 gema2 personaje =
+ gemaDeMayorPoder (gema2:gemas) personaje
+ |otherwise = gemaDeMayorPoder (gema1:gemas) personaje
+
+menorEnergiaEnPersonaje gema1 gema2 personaje = (energia.gema1 $ personaje) > (energia.gema2 $ personaje)
+
+
+----------------------------------------------------------------
+
+infinitasGemas :: Gema -> [Gema]
+infinitasGemas gema = gema:(infinitasGemas gema)
+
+guanteleteDeLocos :: Guantelete
+guanteleteDeLocos = UnGuantelete "vesconite" (infinitasGemas gemaTiempo)
+
+usoLasTresPrimerasGemas :: Guantelete -> Personaje -> Personaje
+usoLasTresPrimerasGemas guantelete = (utilizar . take 3. gemas) guantelete
+
+--- - - - - - ---->>>>>gemaMasPoderosa punisher guanteleteDeLocos
+--No se puede ejecutar, es una lista infinita en donde no termina más porque no hay una condición de corte. El guantelete de locos tiene infinitas gemas de tiempo y al usar "gemaMasPoderosa", se intenta comparar constantemente la gema que hasta ahora fue la más poderosa, con la siguiente que es igual de poderosa que la anterior, y que las miles de millones que siguen. Pero eso no lo sabe nuestra función, e intenta cumplir a través de la resolución "lazy" (porque Haskell aprovecha la transparencia referencial), por eso el programa no tira algún error como podría pasar en otros lenguajes de programación que utilizan la resolución "eager".
+-- - - - --  -- >> en cambio usoLasTresPrimerasGemas guanteleteDeLocos punisher
+--Sí se puede ejecutar, porque TIENE una condición de corte y es "Usar las tres primeras gemas solamente" por lo cual nuestra función "gemaMasPoderosa" podrá hacer su trabajo feliz.
 

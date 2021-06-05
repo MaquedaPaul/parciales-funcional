@@ -125,6 +125,26 @@ excursionesDesestresantes excursiones turista = filter (esDesestresantePara turi
 esDesestresantePara ::  Turista -> Excursion ->Bool
 esDesestresantePara turista excursion = deltaExcursionSegun stress turista excursion <= (-3)
 
+type Tour = [Excursion]
 
+completo :: Tour
+completo = [caminarCiertosMinutos 20,apreciarElementoPaisaje "cascada",caminarCiertosMinutos 40, salirHablarIdioma "melmacquiano"]
 
+ladoB :: Excursion -> Tour
+ladoB excursionElegida = [paseoEnBarco "tranquila",excursionElegida,caminarCiertosMinutos 120]
+
+islaVecina :: String -> Excursion -> Tour
+islaVecina "fuerte" excursionElegida = [apreciarElementoPaisaje "lago",paseoEnBarco "fuerte",excursionElegida,paseoEnBarco "fuerte"]
+
+islaVecina marea excursionElegida = [irPlaya,paseoEnBarco marea,excursionElegida,paseoEnBarco marea]
+
+hacerTour :: Tour -> Turista -> Turista
+hacerTour tour turista = foldl (flip hacerExcursion) (aumentarStressPorTour tour turista) tour
+
+hacerTour' :: Turista -> Tour -> Turista
+hacerTour' turista tour =
+  foldl (flip hacerExcursion) (cambiarStress (length tour) turista) tour
+
+aumentarStressPorTour :: Tour -> Turista -> Turista
+aumentarStressPorTour tour = alterarStress (+) (length tour) 
 

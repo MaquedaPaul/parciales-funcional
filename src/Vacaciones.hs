@@ -148,3 +148,113 @@ hacerTour' turista tour =
 aumentarStressPorTour :: Tour -> Turista -> Turista
 aumentarStressPorTour tour = alterarStress (+) (length tour) 
 
+toursBienPiolas = [completo,(ladoB irPlaya),islaVecina "fuerte" irPlaya]
+
+
+esConvincente :: [Tour] -> Turista -> Bool
+esConvincente tours turista = (any.any) (((not.viajaSolo) turista &&).(esDesestresantePara turista)) tours
+
+esConvincente'' :: [Tour] -> Turista -> Bool
+esConvincente'' tours turista = any (propuestaConvincente turista) tours
+
+propuestaConvincente :: Turista -> Tour -> Bool
+propuestaConvincente turista tour = any (loDejaAcompaniado turista) (excursionesDesestresantes tour turista)
+
+loDejaAcompaniado :: Turista -> Excursion -> Bool
+loDejaAcompaniado turista = not . viajaSolo . flip hacerExcursion turista
+
+
+
+--------------------------------------------------------
+
+propuestaConvincente' :: Turista -> [Tour] -> Bool
+propuestaConvincente' turista = any (esConvincente' turista)
+
+esDesestresante :: Turista -> Excursion -> Bool
+esDesestresante turista = (<= -3) . deltaExcursionSegun stress turista
+
+excursionesDesestresantes' :: Turista -> [Excursion] -> [Excursion]
+excursionesDesestresantes' turista = filter (esDesestresante turista)
+
+esConvincente' :: Turista -> Tour -> Bool
+esConvincente' turista = any (dejaAcompaniado turista) . excursionesDesestresantes' turista
+
+dejaAcompaniado :: Turista -> Excursion -> Bool
+dejaAcompaniado turista = not . viajaSolo . flip hacerExcursion turista
+
+---------------------------------------------------------------------------
+
+efectividadTour :: Tour -> [Turista] -> Int
+efectividadTour tour = sum . map (flip espiritualidad tour) . filter (flip propuestaConvincente tour) 
+    
+    
+    --map espiritualidad (filter (flip propuestaConvincente tour) turistas)
+
+
+espiritualidad :: Turista -> Tour -> Int
+espiritualidad turista = (*(-1)).(deltaRutina turista)
+
+deltaRutina :: Turista -> Tour -> Int
+deltaRutina turista tour = deltaSegun nivelDeRutina (hacerTour tour turista) turista
+
+nivelDeRutina :: Turista -> Int
+nivelDeRutina turista = cansancio turista + stress turista
+
+
+---------------------------------------------------------
+
+efectividad' :: Tour -> [Turista] -> Int
+efectividad' tour = sum . map (espiritualidadAportada tour) . filter (flip esConvincente' tour)
+
+espiritualidadAportada :: Tour -> Turista -> Int
+espiritualidadAportada tour = negate . deltaRutina' tour
+
+deltaRutina' :: Tour -> Turista -> Int
+deltaRutina' tour turista =
+   deltaSegun nivelDeRutina (hacerTour tour turista) turista
+
+-- nivelDeRutina :: Turista -> Int
+-- nivelDeRutina turista = cansancio turista + stress turista
+
+
+
+--4)
+--a)
+
+infinitasExcursiones :: Excursion -> Tour 
+infinitasExcursiones excursion = excursion:(infinitasExcursiones excursion)
+
+infinitasPlayas :: Tour
+infinitasPlayas = infinitasExcursiones irPlaya
+
+--b)
+-- --¿Se puede saber si ese tour es convincente para Ana? ¿Y con Beto? Justificar.
+-- *Vacaciones> propuestaConvincente ana (take 5 infinitasPlayas)
+-- True
+-- *Vacaciones> propuestaConvincente ana (take 10 infinitasPlayas)
+-- True
+-- *Vacaciones> propuestaConvincente beto (take 10 infinitasPlayas)
+-- False
+-- *Vacaciones> propuestaConvincente beto (take 1 infinitasPlayas) 
+--Se puede saber si cortamos la lista con take, no es necesario tomar millones de ejemplos, con solo el primero o a lo sumo 10 se puede averiguar.
+
+--c)
+-- *Vacaciones> efectividadTour (take 5000 infinitasPlayas) modeloTuristas
+--30
+--Converge a 30
+salidaLocal :: Excursion
+salidaLocal = salirHablarIdioma "melmacquiano"
+
+playasEternas :: Tour
+playasEternas = salidaLocal : repeat irPlaya
+
+-- b)
+{-
+Para Ana sí porque la primer actividad ya es desestresante y siempre está acompañada.
+Con Beto no se cumple ninguna de las 2 condiciones y el algoritmo diverge.
+-}
+
+-- c)
+{-
+No, solamente funciona para el caso que se consulte con una lista vacía de turista, que dará siempre 0.
+-}

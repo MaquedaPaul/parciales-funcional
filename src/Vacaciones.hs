@@ -238,6 +238,8 @@ infinitasPlayas = infinitasExcursiones irPlaya
 -- *Vacaciones> propuestaConvincente beto (take 1 infinitasPlayas) 
 --Se puede saber si cortamos la lista con take, no es necesario tomar millones de ejemplos, con solo el primero o a lo sumo 10 se puede averiguar.
 
+--A esta justificación se le puede añadir el por qué pasa (ver más abajo)
+
 --c)
 -- *Vacaciones> efectividadTour (take 5000 infinitasPlayas) modeloTuristas
 --30

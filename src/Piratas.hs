@@ -25,6 +25,11 @@ jeff = UnTripulante {
     nombre = "Jeff McGregory",
     energia = 60
 }
+timoti = UnTripulante {
+    nombre = "Timoti El Vanidoso",
+    energia = 0
+}
+
 
 carlos = UnTripulante {
     nombre = "Carlos Malasangre",
@@ -91,8 +96,8 @@ balandro = UnBarco {
 }
 
 galeonDeJeff = UnBarco {
-    tripulacion = [jeff,carlos],
-    oro = 20,
+    tripulacion = [jeff,timoti,carlos],
+    oro = 30,
     balas = 20,
     dimension = 150,
     madera = 20
@@ -219,7 +224,60 @@ beberGrogTripulacion :: Int -> Barco -> [Tripulante]
 beberGrogTripulacion repeticiones = take repeticiones.cycle.map beberGrog.tripulacion
 
 enfrentarEsqueletos :: Int -> Suceso
-enfrentarEsqueletos esqueletos barco = undefined-- take esqueletos .cycle.enfrentarEsqueleto
+enfrentarEsqueletos esqueletos barco 
+ |(esqueletos /= 0) && (not.esBarcoFantasma $ barco) = barco {
+ tripulacion = (enfrentamientoConEsqueletos esqueletos barco):
+ (tail.tripulantesConVida $ barco)}
+ |otherwise = barco
 
-bebe :: Int -> Actividad -> Tripulante
-bebe repeticiones actividad = undefined
+enfrentamientoConEsqueletos :: Int -> Barco -> Tripulante
+enfrentamientoConEsqueletos esqueletos = last . take (esqueletos+1) .iterate (enfrentarEsqueleto) . primerTripulanteConVida 
+
+tripulantesConVida :: Barco -> [Tripulante]
+tripulantesConVida = filter (not.estaMuerto) . tripulacion
+
+primerTripulanteConVida :: Barco -> Tripulante
+primerTripulanteConVida = head.tripulantesConVida
+-- take esqueletos .cycle.enfrentarEsqueleto
+
+beberGrogConRepeticiones :: Int -> Tripulante -> Tripulante
+beberGrogConRepeticiones repeticiones tripulante = tripulante {energia=20*repeticiones}
+
+------------------------------------------------------------------
+
+maximoSegun f = foldl1 (mayorSegun f)
+
+mayorSegun f a b
+  | f a > f b = a
+  | otherwise = b
+
+ordenarPor :: Ord a => (b -> a) -> [b] -> [b] 
+ordenarPor ponderacion =
+  foldl (\ordenada elemento -> filter ((< ponderacion elemento).ponderacion) ordenada
+                                  ++ [elemento] ++ filter ((>= ponderacion elemento).ponderacion) ordenada) []
+
+
+pasarTiendaGrog :: Suceso
+pasarTiendaGrog barco
+ |(not.null.tripulantesMuertos $ barco) && (not.esBarcoFantasma $ barco) && (tieneOroSuficiente barco) = barco {
+     tripulacion = tripulacionConRevivido barco,
+ oro =  30 - oro barco
+ }
+ |otherwise=barco
+
+tieneOroSuficiente :: Barco -> Bool
+tieneOroSuficiente = (>=30).oro 
+
+tripulantesMuertos :: Barco -> [Tripulante]
+tripulantesMuertos = filter (estaMuerto) . tripulacion
+
+tripulanteRevivido :: Barco -> Tripulante
+tripulanteRevivido = beberGrog . head . ordenarPor (not.estaMuerto) . tripulacion
+
+tripulacionConRevivido :: Barco -> [Tripulante]
+tripulacionConRevivido barco = (tripulanteRevivido barco):(tail (ordenarPor (not.estaMuerto).tripulacion $ barco))
+
+primerTripulanteMuerto :: Barco -> Tripulante
+primerTripulanteMuerto = head.tripulantesMuertos
+
+

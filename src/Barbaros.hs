@@ -1,6 +1,7 @@
 module Barbaros where
 
 import Text.Show.Functions
+import Data.Char
 
 type Habilidad = String
 
@@ -47,6 +48,8 @@ amuletosMisticos habilidad = agregarHabilidad habilidad
 cuerda :: Objeto -> Objeto -> Objeto
 cuerda objeto1 objeto2 = objeto1.objeto2
 
+megafono :: Objeto
+megafono barbaro = barbaro {habilidades = [map toUpper . concat . habilidades $ barbaro]}
 
-
-
+megafonoBarbarico :: Objeto
+megafonoBarbarico = cuerda ardilla megafono

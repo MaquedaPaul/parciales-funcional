@@ -21,30 +21,7 @@ data Barco = UnBarco {
 } deriving (Show,Eq)
 
 
-jeff = UnTripulante {
-    nombre = "Jeff McGregory",
-    energia = 60
-}
-timoti = UnTripulante {
-    nombre = "Timoti El Vanidoso",
-    energia = 0
-}
 
-
-carlos = UnTripulante {
-    nombre = "Carlos Malasangre",
-    energia = 40
-} 
-
-jorge = UnTripulante {
-    nombre = "Jorge el Malhabido",
-    energia = 30
-} 
-
-ramon = UnTripulante {
-    nombre = "Ramon Ramonete",
-    energia = 70
-} 
 
 
 
@@ -68,7 +45,7 @@ beberGrog :: Actividad
 beberGrog = modificarEnergia (20)
 
 estaMuerto :: Tripulante -> Bool
-estaMuerto = (==0).energia
+estaMuerto = (<=0).energia
 
 
 ----------------------------------------
@@ -149,22 +126,12 @@ saquear :: (Barco->Int) -> Barco -> Barco -> Int
 saquear elementoSaqueado barco enemigo = (elementoSaqueado barco) + (elementoSaqueado enemigo)
 
 
-
--- data Barco = UnBarco {
---     tripulacion :: [Tripulante],
---     oro :: Int,
---     balas :: Int,
---     dimension :: Int,
---     madera :: Int
--- } deriving (Show,Eq)
-
-
-
 esMasGrande :: Barco -> Barco -> Bool
 esMasGrande barco enemigo = (dimension barco) > (dimension enemigo)
 
 tieneBalas :: Barco -> Barco -> Bool
 tieneBalas barco enemigo = (balas barco) >= (balas enemigo)
+
 ----------------------------------------------------------------
 
 
@@ -187,11 +154,12 @@ tieneComponenteBarco componente barco parametro enemigo = (componente barco) `pa
 
 type Suceso = Barco -> Barco
 
---El problema con embarcarTesoro es que no funciona para pesos muy grandes, habría que utilizar recursividad para resolverlo
+--El problema con embarcarTesoro es que no funciona para pesos muy grandes (en el sentido que los tripulantes quedan en negativos muy grandes), habría que utilizar recursividad para resolverlo, ya que se estaría comprobando todo el tiempo si está muerto, aunque esto también depende de la exigencia del profesor
+--Alguien muerto quiere decir energia = 0, Alguien que su cuerpo está destrozadísimo podría ser energía = -500 (y obviamente está muerto)
 
 embarcarTesoro :: Int -> Suceso
 embarcarTesoro pesoEnOro barco  
- |not.esBarcoFantasma $ barco = 
+ |(not.esBarcoFantasma $ barco) && ((/=0).cuantosNoMueren (transportarUnaCarga pesoEnOro).tripulacion $ barco) = 
      barco {
     tripulacion = (flip dividirRepartir (tripulacion barco)) .
     (div pesoEnOro ) . cuantosNoMueren (transportarUnaCarga pesoEnOro) $ tripulacion barco,
@@ -221,7 +189,7 @@ encontrarGrog barco
  |otherwise = barco
 
 beberGrogTripulacion :: Int -> Barco -> [Tripulante] 
-beberGrogTripulacion repeticiones = take repeticiones.cycle.map beberGrog.tripulacion
+beberGrogTripulacion repeticiones = last.take (repeticiones+1).iterate (map beberGrog).tripulacion
 
 enfrentarEsqueletos :: Int -> Suceso
 enfrentarEsqueletos esqueletos barco 
@@ -231,7 +199,7 @@ enfrentarEsqueletos esqueletos barco
  |otherwise = barco
 
 enfrentamientoConEsqueletos :: Int -> Barco -> Tripulante
-enfrentamientoConEsqueletos esqueletos = last . take (esqueletos+1) .iterate (enfrentarEsqueleto) . primerTripulanteConVida 
+enfrentamientoConEsqueletos esqueletos = last . take (esqueletos+1) . iterate (enfrentarEsqueleto) . primerTripulanteConVida 
 
 tripulantesConVida :: Barco -> [Tripulante]
 tripulantesConVida = filter (not.estaMuerto) . tripulacion
@@ -280,4 +248,116 @@ tripulacionConRevivido barco = (tripulanteRevivido barco):(tail (ordenarPor (not
 primerTripulanteMuerto :: Barco -> Tripulante
 primerTripulanteMuerto = head.tripulantesMuertos
 
+type Travesia = [Suceso]
+
+recompensa ::Int -> Suceso
+recompensa recompensa barco 
+ |not.esBarcoFantasma $ barco = barco{oro = oro barco + recompensa}
+ |otherwise = barco
+
+recompensaPorTripulante :: Suceso
+recompensaPorTripulante barco 
+ |not.esBarcoFantasma $ barco = 
+     barco{
+     oro = oro barco + ((200*).length . 
+     filter (not.estaMuerto).tripulacion $ barco)
+     }
+ |otherwise = barco
+
+dobleRecompensa :: Suceso
+dobleRecompensa barco
+ |not.esBarcoFantasma $ barco = barco{oro = oro barco * 2}
+ |otherwise = barco
+
+--Me dí cuenta que se podía parametrizar así xdd pero ya jue
+parametrizando :: Barco -> Bool -> Suceso -> Barco
+parametrizando barco condicion accion
+ |condicion = accion barco
+ |otherwise = barco
+
+fuerteDeLosCondenados :: Travesia
+fuerteDeLosCondenados = [enfrentarEsqueletos 100, pasarTiendaGrog, embarcarTesoro 30,recompensa 50]
+
+travesiaFlameHeart :: Travesia
+travesiaFlameHeart = [flip enfrentarBarco galeonTFH,flip enfrentarBarco bergantinTFH,encontrarGrog, embarcarTesoro 150,recompensaPorTripulante]
+
+laGirita :: Travesia
+laGirita = [pasarTiendaGrogConRepeticion 4, enfrentarEsqueletos 10,dobleRecompensa]
+
+pasarTiendaGrogConRepeticion :: Int -> Suceso
+pasarTiendaGrogConRepeticion repeticiones = last.take repeticiones.iterate (pasarTiendaGrog)
+
+superarTravesia :: Barco -> Travesia -> Barco
+superarTravesia barco = foldl (superarSuceso) barco
+
+superarSuceso :: Barco -> Suceso -> Barco
+superarSuceso barco suceso = suceso barco 
+
+galeonTFH = UnBarco{
+    tripulacion = [jorge,ramon,excelsio,mequedesinideasxd],
+    oro = 0,
+    balas = 50,
+    dimension = 50,
+    madera = 50
+}
+
+bergantinTFH = UnBarco{
+    tripulacion = [aber,jojos,thorfinn],
+    oro = 0,
+    balas = 30,
+    dimension = 100,
+    madera = 30
+}
+
+
+
+jeff = UnTripulante {
+    nombre = "Jeff McGregory",
+    energia = 7
+}
+timoti = UnTripulante {
+    nombre = "Timoti El Vanidoso",
+    energia = 3
+}
+
+
+carlos = UnTripulante {
+    nombre = "Carlos Malasangre",
+    energia = 7
+} 
+
+jorge = UnTripulante {
+    nombre = "Jorge el Malhabido",
+    energia = 30
+} 
+
+ramon = UnTripulante {
+    nombre = "Ramon Ramonete",
+    energia = 30
+} 
+
+excelsio = UnTripulante {
+    nombre = "Excelsio Malapeste",
+    energia = 30
+} 
+
+mequedesinideasxd = UnTripulante {
+    nombre = "la idea",
+    energia = 30
+} 
+
+jojos = UnTripulante {
+    nombre = "IT'S ME! DIO",
+    energia = 10000-9990
+} 
+
+thorfinn = UnTripulante {
+    nombre = "Thorfinn hijo de Thors",
+    energia = 100000-99970
+} 
+
+aber = UnTripulante {
+    nombre = "aberrr",
+    energia = 10
+} 
 

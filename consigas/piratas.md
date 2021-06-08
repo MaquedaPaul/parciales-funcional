@@ -58,10 +58,23 @@ Enfrentar un ejército de esqueletos del cual conocemos la cantidad. El barco el
 
 Pasar por una tienda de grog, al hacerlo, el barco le da de beber grog a su primer tripulante que haya muerto y paga 30 de oro (el costo de un grog). Si no tiene oro suficiente o si toda la tripulación estaba viva, no hace nada.
 
-
+4)
 Modelar los sucesos que pueden pasar en una travesía.
 Nota: si tratamos de mandar un barco fantasma a uno de estos sucesos siempre queda igual que como estaba, porque no tiene tripulación que pueda hacer nada y se sabe que es de mala suerte acercarse a un barco fantasma.
 
 
+TRAVESÍAS
+Una travesía es una serie de sucesos que si un barco logra superar consigue una recompensa.
+Si logra sobrevivir a los sucesos sin convertirse en un barco fantasma, entonces se cobra la recompensa que es una cantidad de oro que depende de la travesía.
 
+
+Modelar las siguientes travesías:
+
+Fuerte de los condenados: consta de enfrentar un ejército de 100 esqueletos, pasar por una tienda de grog y embarcar un tesoro de 30 kg en oro. La recompensa de esta travesía es de 50 kg de oro.
+
+La travesía de flame heart:  consta de enfrentarse a un galeón con 4 tripulantes que tienen 30 de energía y con 50 tablones de madera y 50 balas de cañón, un Bergantín con 3 tripulantes que tienen 10 de energía y con 30 tablones de madera y 30 balas de cañón, encontrar un cargamento de grog y embarcar un tesoro de 150 kg de oro. Al terminar la recompensa es de 200 kg de oro por cada tripulante que sobrevivió. 
+
+La girita: consta de pasar 4 veces por una tienda de grog y finalmente pelear con un ejército de 10 esqueletos. Al terminar su recompensa equivale a la cantidad de oro ya presente en el barco(osea queda con el doble de oro).
+
+Modelar las travesías mencionadas
 

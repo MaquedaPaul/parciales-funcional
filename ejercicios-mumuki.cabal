@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 88d5624d982639e55e94a376ab0750c4f7477cc25bec3dd1637187dff59bf062
+-- hash: a3d31d92d529592b6895eb9d268eda8ab84f08acde7a095b2defaabd843c542f
 
 name:           ejercicios-mumuki
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Barbaros
       Piratas
       Thanos
       Vacaciones

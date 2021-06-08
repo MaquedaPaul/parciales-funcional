@@ -43,5 +43,25 @@ Si el barco pierde contra su oponente se queda sin recursos. En caso contrario, 
 Queremos saber cómo quedó el barco luego de enfrentarse con un enemigo. 
 
 
+SUCESOS
+Cuando estos peculiares personajes no están arrancándose las tripas unos con otros suelen embarcarse en travesías en las que pueden ocurrir diferentes sucesos.
+
+
+Un suceso puede ser:
+Embarcar un tesoro del cual conocemos su peso en oro. Se distribuye el peso a cargar entre cada tripulantes que no haya muerto (por ejemplo, si un barco con 5 tripulantes vivos levanta un tesoro de 100kg, cada tripulante carga 20kg) . El resultado debería ser el barco con el oro cargado y con sus tripulantes habiendo transportado la carga.
+
+Enfrentar a un barco (el barco que realiza la travesía es el primero del enfrentamiento).
+
+Encontrar un cargamento de grog, al hacerlo cada tripulante se toma 5 grogs. Grog! muuuuuucho grog!
+
+Enfrentar un ejército de esqueletos del cual conocemos la cantidad. El barco elige al primer tripulante con vida y le envía a enfrentar a cada esqueleto uno tras otro.
+
+Pasar por una tienda de grog, al hacerlo, el barco le da de beber grog a su primer tripulante que haya muerto y paga 30 de oro (el costo de un grog). Si no tiene oro suficiente o si toda la tripulación estaba viva, no hace nada.
+
+
+Modelar los sucesos que pueden pasar en una travesía.
+Nota: si tratamos de mandar un barco fantasma a uno de estos sucesos siempre queda igual que como estaba, porque no tiene tripulación que pueda hacer nada y se sabe que es de mala suerte acercarse a un barco fantasma.
+
+
 
 

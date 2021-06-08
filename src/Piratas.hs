@@ -182,11 +182,17 @@ tieneComponenteBarco componente barco parametro enemigo = (componente barco) `pa
 
 type Suceso = Barco -> Barco
 
+--El problema con embarcarTesoro es que no funciona para pesos muy grandes, habría que utilizar recursividad para resolverlo
+
 embarcarTesoro :: Int -> Suceso
-embarcarTesoro pesoEnOro barco = barco {
-    tripulacion = (flip dividirRepartir (tripulacion barco)). cuantosNoMueren (transportarUnaCarga pesoEnOro) $ tripulacion barco,
+embarcarTesoro pesoEnOro barco  
+ |not.esBarcoFantasma $ barco = 
+     barco {
+    tripulacion = (flip dividirRepartir (tripulacion barco)) .
+    (div pesoEnOro ) . cuantosNoMueren (transportarUnaCarga pesoEnOro) $ tripulacion barco,
     oro = pesoEnOro
     }
+ |otherwise = barco
 
 cuantosNoMueren :: Actividad -> [Tripulante] ->Int
 cuantosNoMueren actividad = length.(filter (not.estaMuerto)).(map actividad)
@@ -194,9 +200,26 @@ cuantosNoMueren actividad = length.(filter (not.estaMuerto)).(map actividad)
 dividirRepartir :: Int -> [Tripulante] -> [Tripulante]
 dividirRepartir peso = map (transportarUnaCarga peso) 
 
-
+--No se utilizó, pero puede ser util
 modificarOroBarco :: Int -> Barco -> Barco
 modificarOroBarco deltaOro barco = barco {oro = oro barco + deltaOro}
 
 
+enfrentarBarco :: Barco -> Suceso
+enfrentarBarco barco enemigo 
+ |not.esBarcoFantasma $ barco = enfrentamientoBarcos barco enemigo
+ |otherwise = barco
 
+encontrarGrog :: Suceso
+encontrarGrog barco 
+ |not.esBarcoFantasma $ barco = barco {tripulacion = beberGrogTripulacion 5 barco}
+ |otherwise = barco
+
+beberGrogTripulacion :: Int -> Barco -> [Tripulante] 
+beberGrogTripulacion repeticiones = take repeticiones.cycle.map beberGrog.tripulacion
+
+enfrentarEsqueletos :: Int -> Suceso
+enfrentarEsqueletos esqueletos barco = undefined-- take esqueletos .cycle.enfrentarEsqueleto
+
+bebe :: Int -> Actividad -> Tripulante
+bebe repeticiones actividad = undefined

@@ -2,6 +2,7 @@ module Barbaros where
 
 import Text.Show.Functions
 import Data.Char
+import Data.List
 
 type Habilidad = String
 
@@ -20,8 +21,9 @@ data Barbaro = UnBarbaro {
     objetos :: [Objeto]
 } deriving (Show)
 
-dave = UnBarbaro "Dave" 100 ["tejer","escribirPoesia"] [ardilla, varitasDefectuosas]
+dave = UnBarbaro "Dave" 100 ["escribirPoesia","escribirPoesia","tejer","volar","trotar","morder","comer","volar","trotar","morder"] [ardilla, varitasDefectuosas]
 
+-- dave = UnBarbaro "Dave" 100 ["tejer","escribirPoesia","tejer"] [ardilla, varitasDefectuosas]
 type Objeto = Barbaro -> Barbaro
 
 ardilla :: Objeto
@@ -125,3 +127,39 @@ sobreviveAventura barbaro aventura = all (sobreviveEvento barbaro) aventura
 
 sobreviveEvento :: Barbaro -> Evento -> Bool
 sobreviveEvento barbaro evento = evento barbaro 
+
+---------------------------------------------------------------
+
+esRepetido :: String -> [String] -> Bool
+esRepetido = undefined
+
+--eliminarRepetidos :: [String]      -- -> Personaje -> Gema
+
+
+--eliminarRepetidos :: [String] -> [String]
+eliminarRepetidos [] = []
+eliminarRepetidos (h1:h2:habilidades)
+ |noHayRepetidos (h1:h2:habilidades) = (h1:h2:habilidades)
+ |siSonIguales (h1:h2:habilidades) = 
+     eliminarRepetidos (h2:habilidades)
+ |siSonDistintos (h1:h2:habilidades) && tieneRepetido (h1:h2:habilidades) = eliminarRepetidos ((h1:habilidades)++[h2])
+ |otherwise = eliminarRepetidos (h2:habilidades++[h1])
+
+siSonIguales (x1:x2:xs)= x1==x2
+
+
+siSonDistintos (x1:x2:xs)= x1/=x2
+--existenRepetidos habilidades = elem (head habilidades) (tail habilidades)
+
+existenRepetidos' habilidades = 2 <= (length (filter (== (head habilidades)) (tail habilidades)))
+
+existenRepetidos'' :: [String] -> Bool
+existenRepetidos'' habilidades = any ((>1) . length) . group . sort $ habilidades
+
+noHayRepetidos :: [String] -> Bool
+noHayRepetidos = not.existenRepetidos''
+
+tieneRepetido :: [String] -> Bool
+tieneRepetido habilidades = (flip elem (tail habilidades)) .head $ habilidades
+
+

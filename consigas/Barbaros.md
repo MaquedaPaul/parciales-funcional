@@ -47,9 +47,7 @@ no tienen pulgares, los demás sí.
 
 a. saqueo: El bárbaro debe tener la habilidad de robar y tener más de 80 de fuerza.
 
-b. gritoDeGuerra: El bárbaro debe tener un poder de grito de guerra igual a la cantidad de letras
-de sus habilidades. El poder necesario para aprobar es 4 veces la cantidad de objetos del
-bárbaro.
+b. gritoDeGuerra: El bárbaro debe tener un poder de grito de guerra igual a la cantidad de letras de sus habilidades. El poder necesario para aprobar es 4 veces la cantidad de objetos del bárbaro.
 
 c. caligrafia: El bárbaro tiene caligrafía perfecta (para el estándar barbárico de la época) si sus
 habilidades contienen más de 3 vocales y comienzan con mayúscula.
@@ -74,6 +72,16 @@ asegurarse de que los mismos reciban su legado.
 El descendiente de un bárbaro comparte su nombre, y un asterisco por cada generación. Por ejemplo "Dave*",
 "Dave**" , "Dave***" , etc.
 
+Además, tienen en principio su mismo poder, habilidades sin repetidos, y los objetos de su padre, pero antes de
+pasar a la siguiente generación, utilizan (aplican sobre sí mismos) los objetos. Por ejemplo, el hijo de Dave será
+equivalente a:
 
+(ardilla.varitasDefectuosas) (Barbaro "Dave*" 100 ["tejer","escribirPoesia"] [ardilla,
+varitasDefectuosas])
+
+Definir la función descendientes, que dado un bárbaro nos de sus infinitos descendientes.
+
+C. Pregunta: ¿Se podría aplicar sinRepetidos sobre la lista de objetos? ¿Y sobre el nombre de un bárbaro?
+¿Por qué?
 
 

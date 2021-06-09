@@ -64,8 +64,18 @@ type GrupoBarbaros = [Barbaro]
 aventuraBarbarica :: Aventura
 aventuraBarbarica = [invasionDeSuciosDuendes,cremalleraDelTiempo,ritualDeFechorias]
 
+--Es más adecuado elem
 invasionDeSuciosDuendes :: Evento
-invasionDeSuciosDuendes = sobreviveSi any (== "Escribir Poesia Atroz").habilidades
+invasionDeSuciosDuendes = sobreviveSi elem "Escribir Poesia Atroz".habilidades
+
+
+-- cremalleraDelTiempo' :: Prueba
+-- cremalleraDelTiempo' barbaro= nombre barbaro == "Faffy" || nombre barbaro == "Astro"
+
+-- noTienePulgares :: Nombre -> Bool
+-- noTienePulgares "Faffy" = True
+-- noTienePulgares "Astro" = True
+-- noTienePulgares _ = False
 
 cremalleraDelTiempo :: Evento
 cremalleraDelTiempo = sobreviveSi flip elem (noTienePulgares).nombre
@@ -87,7 +97,7 @@ saqueo :: Prueba
 saqueo barbaro = (tieneHabilidad "saquear" barbaro) && (tieneFuerza 80 barbaro)
 
 tieneHabilidad :: String -> Barbaro -> Bool
-tieneHabilidad habilidad = any (==habilidad).habilidades 
+tieneHabilidad habilidad = elem habilidad.habilidades 
 
 tieneFuerza :: Int -> Barbaro -> Bool
 tieneFuerza fuerzaRequerida = (>=fuerzaRequerida).fuerza
@@ -117,7 +127,7 @@ vocales :: String -> String
 vocales palabra = filter (esVocal) palabra
 
 esVocal :: Char -> Bool
-esVocal caracter = elem (caracter) ['a','e','i','o','u']
+esVocal caracter = elem (caracter) ['a','e','i','o','u','A', 'E', 'I', 'O', 'U']
 
 sobrevivientes :: [Barbaro] -> Aventura -> [Barbaro]
 sobrevivientes barbaros aventura = filter (flip sobreviveAventura aventura) barbaros
@@ -162,4 +172,4 @@ noHayRepetidos = not.existenRepetidos''
 tieneRepetido :: [String] -> Bool
 tieneRepetido habilidades = (flip elem (tail habilidades)) .head $ habilidades
 
-
+----PENDIENTE

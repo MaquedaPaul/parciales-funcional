@@ -3,7 +3,7 @@ module Pdeppi where
 import Text.Show.Functions
 import Data.Char
 import Data.List
-
+rdgdfgdf
 -- type Habilidad = String
 
 -- data Barco = UnBarco {

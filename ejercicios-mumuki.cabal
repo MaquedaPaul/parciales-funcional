@@ -4,9 +4,9 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 19cdbcc5d20c556ccf2d2aaaf585697c754b3c4bf272e81026bd3dba2ce26357
+-- hash: 854af84e5d9253d8baf258cb8f4d3894d7c17d42cdec984cb3f3236ca344c849
 
-name:           parciales-funcional
+name:           ejercicios-mumuki
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/ejercicios-mumukil#readme>
 homepage:       https://github.com/githubuser/ejercicios-mumuki#readme
@@ -28,7 +28,10 @@ source-repository head
 library
   exposed-modules:
       Barbaros
+      CasaPapel
+      Lib
       Piratas
+      Plantilla
       Simulacro
       Thanos
       Vacaciones

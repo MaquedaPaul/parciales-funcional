@@ -46,10 +46,8 @@ arturito = UnRehen {
     nombreRehen = "Arturo",
     nivelComplot = 70,
     nivelMiedo = 50,
-    plan = [esconderse, atacarAlLadron pablo]
+    plan = [esconderse, atacarAlLadronCon pablo]
     }
-
-
 
 pistola :: Int -> Arma
 pistola calibre rehen = modificarComplotRehen (-(5*calibre)) . 
@@ -107,7 +105,7 @@ listaArmas = [pistola 5, ametralladora 30]
 
 
 aplicarArma :: Rehen -> Arma -> Rehen
-aplicarArma rehen unArma  = unArma rehen
+aplicarArma rehen unArma = unArma rehen
 
 
 -- armaConMasMiedo :: [Arma] -> Rehen -> Bool
@@ -162,11 +160,24 @@ ladronArmas :: Ladron -> [Arma]
 ladronArmas = armas
 
 quitarArmasLadron :: Int -> Ladron -> Ladron
-quitarArmasLadron cantidadSacar unLadron = unLadron {armas = take (min cantidadSacar (length.armas $unLadron)) (armas unLadron)}
+quitarArmasLadron cantidadSacar unLadron = unLadron {armas = take (cantidadTotalArmas unLadron - cantidadSacar).armas $ unLadron}
 
 
-atacarAlLadron ::  Rehen -> Plan
-atacarAlLadron compañeroAtaque unLadron = quitarArmasLadron (flip div 10.length.nombreRehen $compañeroAtaque) unLadron
+cantidadTotalArmas :: Ladron -> Int
+cantidadTotalArmas = length.armas
+
+atacarAlLadronCon ::  Rehen -> Plan
+atacarAlLadronCon compañeroAtaque unLadron = quitarArmasLadron (flip div 10.length.nombreRehen $ compañeroAtaque) unLadron
+
+atacarAlLadronCon' ::  Rehen -> Plan
+atacarAlLadronCon' compañeroAtaque unLadron = quitarArmasLadron (flip div 10.longitudNombre $ compañeroAtaque) unLadron
+
+longitudNombre :: Rehen -> Int
+longitudNombre rehen = length.nombreRehen $rehen
+
+
+
+
 
 --Esconderse: Hace que un ladrón pierda una cantidad de armas igual a su cantidad de habilidades dividido 3. 
 
@@ -227,8 +238,35 @@ cantidadArmasLadrones unosLadrones = length.concat.map (armas) $unosLadrones
 laCosaPintaMal :: [Ladron] -> [Rehen] -> Bool
 laCosaPintaMal unosLadrones unosRehenes = nivelComplotPromedio unosRehenes > (nivelMiedoPromedio unosRehenes * cantidadArmasLadrones unosLadrones)
 
---8 -Que los rehenes se rebelen contra un ladrón, usando el plan que tengan en mente. 
---Saben que es mala idea, por lo que todos pierden 10 de complot antes de comenzar la rebelión.
+{-
+type Plan = Ladron -> Ladron
+
+esconderse :: Plan
+esconderse unLadron = quitarArmasLadron (div (cantidadHabilidadesLadron unLadron)  3) unLadron
+
+atacarAlLadron ::  Rehen -> Plan
+atacarAlLadron compañeroAtaque unLadron = quitarArmasLadron (flip div 10.length.nombreRehen $compañeroAtaque) unLadron
+-}
+
+seRebelan :: [Rehen] -> Ladron -> (Ladron,[Rehen]) 
+seRebelan unosRehenes  unLadron = (seRebelanContraLadron unosRehenes unLadron , rehenesConComplotModificado (-10) unosRehenes )
+
+
+seRebelanContraLadron :: [Rehen] -> Ladron -> Ladron
+seRebelanContraLadron unosRehenes unLadron = foldl (aplicarPlan) unLadron (concatMap plan unosRehenes)
+
+rehenesConComplotModificado :: Int -> [Rehen] -> [Rehen]
+rehenesConComplotModificado deltaComplot unosRehenes = modificarComplotRehenes deltaComplot unosRehenes
+
+
+modificarComplotRehenes :: Int -> [Rehen] -> [Rehen]
+modificarComplotRehenes deltaComplot unosRehenes = map (modificarComplotRehen deltaComplot) unosRehenes
+
+aplicarPlan :: Ladron -> Plan -> Ladron
+aplicarPlan ladron unPlan = unPlan ladron
+
+
+
 
 -- 9 Necesito resolver el 8 para poderlo hacer
 

@@ -129,7 +129,6 @@ aplicarArma rehen unArma = unArma rehen
 
 
 
-
 {-
 Hacerse el malo: 
 Cuando el que se hace el malo es Berlín, aumenta el miedo del rehén tanto como la cantidad de letras que sumen sus habilidades.
@@ -166,6 +165,9 @@ quitarArmasLadron cantidadSacar unLadron = unLadron {armas = take (cantidadTotal
 cantidadTotalArmas :: Ladron -> Int
 cantidadTotalArmas = length.armas
 
+cantidadTotalArmasLista :: [Ladron] -> Int
+cantidadTotalArmasLista unLadron = sum. map cantidadTotalArmas $unLadron
+
 atacarAlLadronCon ::  Rehen -> Plan
 atacarAlLadronCon compañeroAtaque unLadron = quitarArmasLadron (flip div 10.length.nombreRehen $ compañeroAtaque) unLadron
 
@@ -195,6 +197,7 @@ esInteligente :: Ladron -> Bool
 esInteligente unLadron = ((>2).cantidadHabilidadesLadron $unLadron) || ((== "Profesor").nombreLadron $unLadron)
 
 -- 3 Que un ladrón consiga un arma nueva, y se la agregue a las que ya tiene.
+
 
 consigueArmaNueva :: Ladron -> Arma -> Ladron
 consigueArmaNueva unLadron unArma = unLadron {armas = unArma : armas unLadron}
@@ -248,8 +251,8 @@ atacarAlLadron ::  Rehen -> Plan
 atacarAlLadron compañeroAtaque unLadron = quitarArmasLadron (flip div 10.length.nombreRehen $compañeroAtaque) unLadron
 -}
 
-seRebelan :: [Rehen] -> Ladron -> (Ladron,[Rehen]) 
-seRebelan unosRehenes  unLadron = (seRebelanContraLadron unosRehenes unLadron , rehenesConComplotModificado (-10) unosRehenes )
+seRebelan :: [Rehen] -> Ladron -> Ladron
+seRebelan unosRehenes  unLadron = seRebelanContraLadron unosRehenes unLadron 
 
 
 seRebelanContraLadron :: [Rehen] -> Ladron -> Ladron
@@ -266,9 +269,10 @@ aplicarPlan :: Ladron -> Plan -> Ladron
 aplicarPlan ladron unPlan = unPlan ladron
 
 
-
-
 -- 9 Necesito resolver el 8 para poderlo hacer
+
+planValencia :: [Rehen] -> [Ladron] -> Int
+planValencia unosRehenes unosLadrones =  (*1000000).cantidadTotalArmasLista.map (seRebelanContraLadron unosRehenes.flip consigueArmaNueva (ametralladora 45)) $unosLadrones
 
 --10 No se puede ya que un ladron al contar con una cantidad infinita de armas no terminaria nunca de multiplicar
 
